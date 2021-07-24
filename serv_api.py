@@ -49,14 +49,40 @@ def add_todo():
 
 	return todo_schema.jsonify(new_todo)
 
-# Get To do list
+# Read To do list
 @app.route('/todo', methods = ['GET'])
 def get():
 	todo_list = todo.query.all()
 	results = todos_schema.dump(todo_list)
 	return jsonify(results)
 
+# Update to do list
+@app.route('/todo/<id>', methods = ['PUT'])
+def update(id):
+	atodo = todo.query.get(id)
 
+	title = request.json['title']
+	description = request.json['description']
+	date = request.json['date']
+
+	atodo.title = title
+	atodo.description = description
+	atodo.date = date
+
+	db.session.commit()
+
+	return todo_schema.jsonify(atodo)
+
+# Delete
+@app.route('/todo', methods=['DELETE'])
+def delete_todo():
+	id_todo = int(request.args.get('id'))
+	atodo = todo.query.get(id_todo)
+
+	db.session.delete(atodo)
+	db.session.commit()
+
+	return todo_schema.jsonify(atodo)
 # Run server
 if __name__ == '__main__':
 	app.run(debug = True)
