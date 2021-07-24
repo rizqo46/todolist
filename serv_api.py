@@ -19,7 +19,7 @@ class todo(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(100))
 	description = db.Column(db.String(200))
-	date = db.Column(db.DateTime)
+	date = db.Column(db.String(20))
 
 
 	def __init__(self, title, description, date):
@@ -35,7 +35,26 @@ class todoSchema(ma.Schema):
 # Init schema
 todo_schema = todoSchema()
 todos_schema = todoSchema(many=True)
-		
+
+# Create a 'To do'
+@app.route('/todo', methods = ['POST'])
+def add_todo():
+	title = request.json['title']
+	description = request.json['description']
+	date = request.json['date']
+
+	new_todo = todo(title, description, date)
+	db.session.add(new_todo)
+	db.session.commit()
+
+	return todo_schema.jsonify(new_todo)
+
+# Get To do list
+@app.route('/todo', methods = ['GET'])
+def get():
+	todo_list = todo.query.all()
+	results = todos_schema.dump(todo_list)
+	return jsonify(results)
 
 
 # Run server
