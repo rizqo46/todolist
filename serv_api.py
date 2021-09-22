@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow 
 import os
 
-# Init First
+# Init First main
 app = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
